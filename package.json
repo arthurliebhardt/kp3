@@ -1,0 +1,19 @@
+{
+  "name": "korepush-codex",
+  "private": true,
+  "packageManager": "pnpm@11.1.1",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev --parallel",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "db:generate": "pnpm --filter @korepush/db db:generate",
+    "db:migrate": "pnpm --filter @korepush/db db:migrate",
+    "worker": "pnpm --filter @korepush/worker dev"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "turbo": "2.9.14",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@korepush/auth": ["packages/auth/src/index.ts"],
+      "@korepush/crypto": ["packages/crypto/src/index.ts"],
+      "@korepush/db": ["packages/db/src/index.ts"],
+      "@korepush/db/*": ["packages/db/src/*"],
+      "@korepush/k8s": ["packages/k8s/src/index.ts"],
+      "@korepush/queue": ["packages/queue/src/index.ts"]
+    }
+  }
+}

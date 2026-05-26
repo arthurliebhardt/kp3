@@ -1,0 +1,25 @@
+{
+  "name": "@korepush/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@korepush/crypto": "workspace:*",
+    "@korepush/db": "workspace:*",
+    "@korepush/k8s": "workspace:*",
+    "@korepush/queue": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "tsx": "4.22.3",
+    "zod": "4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "typescript": "5.9.3"
+  }
+}

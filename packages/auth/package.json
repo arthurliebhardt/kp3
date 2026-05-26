@@ -1,0 +1,22 @@
+{
+  "name": "@korepush/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@korepush/db": "workspace:*",
+    "better-auth": "1.6.11",
+    "drizzle-orm": "0.45.2"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
