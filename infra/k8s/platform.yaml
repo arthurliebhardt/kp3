@@ -172,7 +172,7 @@ spec:
             - name: DATABASE_URL
               value: postgres://yourpaas:$(POSTGRES_PASSWORD)@yourpaas-postgres:5432/yourpaas
             - name: PLATFORM_BASE_DOMAIN
-              value: __DOMAIN__
+              value: __SERVER_IP__
             - name: INSTALLER_VERSION
               value: __VERSION__
 ---
@@ -216,11 +216,11 @@ spec:
                   name: yourpaas-secrets
                   key: ENCRYPTION_KEY
             - name: BETTER_AUTH_URL
-              value: http://__DOMAIN__
+              value: http://__SERVER_IP__
             - name: REGISTRY_URL
               value: registry.yourpaas-system.svc.cluster.local:5000
             - name: PLATFORM_BASE_DOMAIN
-              value: __DOMAIN__
+              value: __SERVER_IP__
             - name: SETUP_REQUIRED
               value: "true"
 ---
@@ -282,8 +282,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: __DOMAIN__
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix

@@ -2,8 +2,7 @@
 set -euo pipefail
 
 PLATFORM_NAMESPACE="yourpaas-system"
-DOMAIN=""
-EMAIL=""
+SERVER_IP=""
 DATA_DIR="/var/lib/yourpaas"
 CHANNEL="stable"
 VERSION="latest"
@@ -26,8 +25,6 @@ Optional:
   install.sh [install|update|uninstall] [flags]
 
 Flags:
-  --domain <hostname>
-  --email <email>
   --skip-k3s
   --skip-cert-manager
   --install-registry
@@ -47,8 +44,6 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     install|update|uninstall) COMMAND="$1"; shift ;;
-    --domain) DOMAIN="$2"; shift 2 ;;
-    --email) EMAIL="$2"; shift 2 ;;
     --skip-k3s) SKIP_K3S="true"; shift ;;
     --skip-cert-manager) SKIP_CERT_MANAGER="true"; shift ;;
     --install-registry) INSTALL_REGISTRY="true"; shift ;;
@@ -151,14 +146,10 @@ detect_public_ip() {
 
 configure_defaults() {
   local public_ip
-  if [[ -z "$DOMAIN" ]]; then
+  if [[ -z "$SERVER_IP" ]]; then
     public_ip="$(detect_public_ip)"
-    [[ -n "$public_ip" ]] || fail "could not auto-detect public IP. Rerun with --domain <hostname>"
-    DOMAIN="${public_ip}.sslip.io"
-  fi
-
-  if [[ -z "$EMAIL" ]]; then
-    EMAIL="admin@${DOMAIN}"
+    [[ -n "$public_ip" ]] || fail "could not auto-detect public IP"
+    SERVER_IP="$public_ip"
   fi
 }
 
@@ -180,7 +171,7 @@ render_platform_manifest() {
   local web_image worker_image
   web_image="${IMAGE_PREFIX}/kp3-web:${VERSION}"
   worker_image="${IMAGE_PREFIX}/kp3-worker:${VERSION}"
-  platform_manifest | sed "s#__DOMAIN__#${DOMAIN}#g; s#__EMAIL__#${EMAIL}#g; s#__VERSION__#${VERSION}#g; s#__WEB_IMAGE__#${web_image}#g; s#__WORKER_IMAGE__#${worker_image}#g"
+  platform_manifest | sed "s#__SERVER_IP__#${SERVER_IP}#g; s#__VERSION__#${VERSION}#g; s#__WEB_IMAGE__#${web_image}#g; s#__WORKER_IMAGE__#${worker_image}#g"
 }
 
 install_platform() {
@@ -218,7 +209,7 @@ EOF
 Your PaaS is ready.
 
 Dashboard:
-  http://${DOMAIN}
+  http://${SERVER_IP}
 
 Next steps:
   1. Open the dashboard
