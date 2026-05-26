@@ -216,7 +216,7 @@ spec:
                   name: yourpaas-secrets
                   key: ENCRYPTION_KEY
             - name: BETTER_AUTH_URL
-              value: https://__DOMAIN__
+              value: http://__DOMAIN__
             - name: REGISTRY_URL
               value: registry.yourpaas-system.svc.cluster.local:5000
             - name: PLATFORM_BASE_DOMAIN
@@ -279,14 +279,8 @@ kind: Ingress
 metadata:
   name: yourpaas-web
   namespace: yourpaas-system
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: traefik
-  tls:
-    - hosts:
-        - __DOMAIN__
-      secretName: yourpaas-web-tls
   rules:
     - host: __DOMAIN__
       http:

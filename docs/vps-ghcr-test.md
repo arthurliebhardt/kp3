@@ -2,6 +2,24 @@
 
 This is the fastest path to test the platform dashboard on a disposable VPS.
 
+## Install
+
+Run this on a fresh Ubuntu 22.04/24.04 or Debian 12 VPS:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arthurliebhardt/kp3/main/scripts/install.sh | sudo bash
+```
+
+If you already have a domain pointed at the VPS:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arthurliebhardt/kp3/main/scripts/install.sh | sudo bash -s -- \
+  --domain panel.example.com \
+  --email admin@example.com
+```
+
+Without `--domain`, the installer auto-detects the public IP and uses `<ip>.sslip.io`.
+
 ## 1. Push images to GHCR
 
 Push this repository to GitHub and run the `Publish GHCR images` workflow.
@@ -29,7 +47,7 @@ Wait until the VPS resolves it:
 dig +short panel.example.com
 ```
 
-## 3. Install from a cloned repo
+## 3. Advanced: install from a cloned repo
 
 On the VPS:
 
@@ -38,13 +56,10 @@ git clone https://github.com/<owner>/<repo>.git
 cd <repo>
 sudo ./scripts/install.sh \
   --domain panel.example.com \
-  --email admin@example.com \
-  --image-prefix ghcr.io/<owner> \
-  --version latest \
-  --yes
+  --email admin@example.com
 ```
 
-## 4. Install with curl
+## 4. Advanced: install with custom image settings
 
 Use this form if you do not want to clone the repo:
 

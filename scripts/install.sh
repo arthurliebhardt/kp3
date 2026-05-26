@@ -7,9 +7,9 @@ EMAIL=""
 DATA_DIR="/var/lib/yourpaas"
 CHANNEL="stable"
 VERSION="latest"
-IMAGE_PREFIX="ghcr.io/yourpaas"
+IMAGE_PREFIX="ghcr.io/arthurliebhardt"
 MANIFEST_FILE=""
-MANIFEST_URL=""
+MANIFEST_URL="https://raw.githubusercontent.com/arthurliebhardt/kp3/main/infra/k8s/platform.yaml"
 SKIP_K3S="false"
 SKIP_CERT_MANAGER="false"
 INSTALL_REGISTRY="true"
@@ -20,6 +20,9 @@ COMMAND="install"
 usage() {
   cat <<'EOF'
 Usage:
+  curl -fsSL https://raw.githubusercontent.com/arthurliebhardt/kp3/main/scripts/install.sh | sudo bash
+
+Optional:
   install.sh [install|update|uninstall] [flags]
 
 Flags:
@@ -74,7 +77,7 @@ Try:
   journalctl -u k3s -n 100
 
 Then rerun:
-  curl -fsSL https://install.yourpaas.dev | bash
+  curl -fsSL https://raw.githubusercontent.com/arthurliebhardt/kp3/main/scripts/install.sh | sudo bash
 EOF
   exit 1
 }
@@ -112,6 +115,7 @@ check_requirements() {
   [[ "$mem" -ge 2 ]] || fail "at least 2 GB RAM is required"
   [[ "$disk" -ge 20 ]] || fail "at least 20 GB free disk is required"
   command -v curl >/dev/null || fail "curl is required"
+  command -v openssl >/dev/null || fail "openssl is required"
 }
 
 install_k3s() {
@@ -139,6 +143,25 @@ generate_secret() {
   openssl rand -base64 32 | tr -d '\n'
 }
 
+detect_public_ip() {
+  curl -fsSL --max-time 5 https://api.ipify.org 2>/dev/null ||
+    curl -fsSL --max-time 5 https://ifconfig.me 2>/dev/null ||
+    true
+}
+
+configure_defaults() {
+  local public_ip
+  if [[ -z "$DOMAIN" ]]; then
+    public_ip="$(detect_public_ip)"
+    [[ -n "$public_ip" ]] || fail "could not auto-detect public IP. Rerun with --domain <hostname>"
+    DOMAIN="${public_ip}.sslip.io"
+  fi
+
+  if [[ -z "$EMAIL" ]]; then
+    EMAIL="admin@${DOMAIN}"
+  fi
+}
+
 platform_manifest() {
   local default_manifest
   default_manifest="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)/../infra/k8s/platform.yaml"
@@ -157,7 +180,7 @@ render_platform_manifest() {
   local web_image worker_image
   web_image="${IMAGE_PREFIX}/kp3-web:${VERSION}"
   worker_image="${IMAGE_PREFIX}/kp3-worker:${VERSION}"
-  platform_manifest | sed "s#__DOMAIN__#${DOMAIN:-localhost}#g; s#__EMAIL__#${EMAIL:-admin@example.com}#g; s#__VERSION__#${VERSION}#g; s#__WEB_IMAGE__#${web_image}#g; s#__WORKER_IMAGE__#${worker_image}#g"
+  platform_manifest | sed "s#__DOMAIN__#${DOMAIN}#g; s#__EMAIL__#${EMAIL}#g; s#__VERSION__#${VERSION}#g; s#__WEB_IMAGE__#${web_image}#g; s#__WORKER_IMAGE__#${worker_image}#g"
 }
 
 install_platform() {
@@ -195,7 +218,7 @@ EOF
 Your PaaS is ready.
 
 Dashboard:
-  ${DOMAIN:+https://$DOMAIN}${DOMAIN:-http://localhost}
+  http://${DOMAIN}
 
 Next steps:
   1. Open the dashboard
@@ -231,6 +254,9 @@ uninstall_platform() {
 require_sudo
 check_os
 check_requirements
+if [[ "$COMMAND" != "uninstall" ]]; then
+  configure_defaults
+fi
 
 case "$COMMAND" in
   install) install_k3s; wait_for_kubernetes; install_platform ;;
