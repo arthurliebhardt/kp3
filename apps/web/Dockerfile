@@ -7,7 +7,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.js
 COPY apps/web/package.json apps/web/package.json
 COPY apps/worker/package.json apps/worker/package.json
 COPY packages packages
-RUN pnpm install --frozen-lockfile=false
+RUN pnpm install --frozen-lockfile=false --config.dangerouslyAllowAllBuilds=true
 
 FROM deps AS build
 COPY apps/web apps/web
