@@ -155,8 +155,8 @@ platform_manifest() {
 
 render_platform_manifest() {
   local web_image worker_image
-  web_image="${IMAGE_PREFIX}/korepush-web:${VERSION}"
-  worker_image="${IMAGE_PREFIX}/korepush-worker:${VERSION}"
+  web_image="${IMAGE_PREFIX}/kp3-web:${VERSION}"
+  worker_image="${IMAGE_PREFIX}/kp3-worker:${VERSION}"
   platform_manifest | sed "s#__DOMAIN__#${DOMAIN:-localhost}#g; s#__EMAIL__#${EMAIL:-admin@example.com}#g; s#__VERSION__#${VERSION}#g; s#__WEB_IMAGE__#${web_image}#g; s#__WORKER_IMAGE__#${worker_image}#g"
 }
 
@@ -166,8 +166,8 @@ install_platform() {
   encryption_key="$(generate_secret)"
   postgres_password="$(generate_secret)"
   registry_password="$(generate_secret)"
-  web_image="${IMAGE_PREFIX}/korepush-web:${VERSION}"
-  worker_image="${IMAGE_PREFIX}/korepush-worker:${VERSION}"
+  web_image="${IMAGE_PREFIX}/kp3-web:${VERSION}"
+  worker_image="${IMAGE_PREFIX}/kp3-worker:${VERSION}"
 
   log "Creating namespace ${PLATFORM_NAMESPACE}"
   kubectl create namespace "$PLATFORM_NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -

@@ -9,8 +9,8 @@ Push this repository to GitHub and run the `Publish GHCR images` workflow.
 The workflow publishes:
 
 ```txt
-ghcr.io/<owner>/korepush-web:latest
-ghcr.io/<owner>/korepush-worker:latest
+ghcr.io/<owner>/kp3-web:latest
+ghcr.io/<owner>/kp3-worker:latest
 ```
 
 For the current installer, make both GHCR packages public or configure Kubernetes image pull secrets manually.
